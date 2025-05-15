@@ -1,7 +1,7 @@
 // components/ComplexHeroLayout.tsx
 "use client"; // This directive is needed in Next.js App Router for client-side hooks
 
-import React, { useState, useEffect, useRef, RefObject } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react'; // Import useCallback
 // Removed ChevronLeftIcon, ChevronRightIcon import as buttons are removed
 // import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid'; // Example icons, install @heroicons/react
 // Removed import for Bars3Icon and XMarkIcon
@@ -172,9 +172,10 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
 
 
     // Force reflow - needed for CSS transition to work from initial state
-    // Accessing offsetHeight is one way to force reflow
+    // Accessing offsetHeight is one way to force reflow. This is intentional.
     const element = slideRefs.current[enteringSlideIndex];
     if (element) { // Check if element exists (it's HTMLDivElement | null)
+        // Accessing offsetHeight forces a reflow, necessary for CSS transitions
         element.offsetHeight;
     }
 
@@ -228,17 +229,19 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
   }, []); // Run only once on mount
 
 
-  // Function to go to the next slide
-  const nextSlide = () => {
+  // Function to go to the next slide (wrapped in useCallback)
+  const nextSlide = useCallback(() => {
     setPrevSlideIndex(currentSlide);
     setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
-  };
+  }, [currentSlide, slides.length]); // Add currentSlide and slides.length to dependencies
 
-  // Function to go to the previous slide
-  const prevSlide = () => {
-    setPrevSlideIndex(currentSlide);
-    setCurrentSlide((prevSlide) => (prevSlide - 1 + slides.length) % slides.length);
-  };
+
+  // Function to go to the previous slide (removed as it was unused)
+  // const prevSlide = () => {
+  //   setPrevSlideIndex(currentSlide);
+  //   setCurrentSlide((prevSlide) => (prevSlide - 1 + slides.length) % slides.length);
+  // };
+
 
   // Auto-play functionality
   useEffect(() => {
@@ -247,7 +250,7 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
 
     const interval = setInterval(nextSlide, 8000); // Change slide every 8 seconds
     return () => clearInterval(interval); // Clean up the interval on component unmount
-  }, [currentSlide, nextSlide, isLoading]); // Add isLoading to dependencies
+  }, [nextSlide, isLoading]); // Add nextSlide and isLoading to dependencies
 
   const currentSlideData = slides[currentSlide];
 
