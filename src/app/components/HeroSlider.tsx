@@ -2,6 +2,7 @@
 "use client"; // This directive is needed in Next.js App Router for client-side hooks
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'; // Import useCallback
+import Image from 'next/image'; // Import Next.js Image component
 // Removed ChevronLeftIcon, ChevronRightIcon import as buttons are removed
 // import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid'; // Example icons, install @heroicons/react
 // Removed import for Bars3Icon and XMarkIcon
@@ -176,7 +177,8 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
     const element = slideRefs.current[enteringSlideIndex];
     if (element) { // Check if element exists (it's HTMLDivElement | null)
         // Accessing offsetHeight forces a reflow, necessary for CSS transitions
-        element.offsetHeight;
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        element.offsetHeight; // Fix for Expected an assignment or function call...
     }
 
     // Apply final state after a small delay to allow reflow and transition to start
@@ -233,7 +235,7 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
   const nextSlide = useCallback(() => {
     setPrevSlideIndex(currentSlide);
     setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
-  }, [currentSlide, slides.length]); // Add currentSlide and slides.length to dependencies
+  }, [currentSlide]); // Removed slides.length from dependencies
 
 
   // Function to go to the previous slide (removed as it was unused)
@@ -309,7 +311,8 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
         {/* Adjusted positioning for responsiveness */}
         <div className={`absolute left-1/2 transform -translate-x-1/2 ${isMobileMenuOpen ? 'hidden' : 'block'}`}> {/* Hide logo when mobile menu is open */}
           {/* Replace with your actual logo image path */}
-          <img src="/logo.svg" alt="Logo" className="h-10 md:h-12" /> {/* Example logo size */}
+          {/* Replaced img with Image component */}
+          <Image src="/logo.svg" alt="Logo" width={100} height={48} className="h-10 md:h-12 w-auto" /> {/* Example logo size, added width/height */}
         </div>
 
         {/* Right Section: Book Now Button and Mobile Menu Button */}
