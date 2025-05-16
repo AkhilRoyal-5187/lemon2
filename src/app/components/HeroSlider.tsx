@@ -9,7 +9,7 @@ import Image from 'next/image'; // Import Next.js Image component
 // import DatePicker from 'react-datepicker'; // DatePicker component
 // import 'react-datepicker/dist/react-datepicker.css'; // DatePicker styles
 // import '../style/datepicker.css'; // Custom datepicker styles (ensure this path is correct)
-import { motion, useAnimation } from 'framer-motion'; // Import motion and useAnimation for loading animation
+import { motion } from 'framer-motion'; // Import motion and useAnimation for loading animation
 // import { useInView } from 'react-intersection-observer'; // Hook to check if element is in view
 // import { Menu } from '@headlessui/react'; // Headless UI Menu for dropdowns
 
