@@ -7,6 +7,9 @@ import Image from 'next/image'; // Import Next.js Image component
 // import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid'; // Example icons, install @heroicons/react
 // Removed import for Bars3Icon and XMarkIcon
 
+// Import the BookForm component
+import BookForm from './BookForm'; // Adjust the import path as needed
+
 // Note: To use the luxury font (Playfair Display), add this link to your main layout or page's <head>:
 // <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 
@@ -235,7 +238,7 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
   const nextSlide = useCallback(() => {
     setPrevSlideIndex(currentSlide);
     setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
-  }, [currentSlide]); // Removed slides.length from dependencies
+  }, [currentSlide, slides.length]); // Added slides.length to dependencies
 
 
   // Function to go to the previous slide (removed as it was unused)
@@ -292,7 +295,7 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
              onMouseLeave={() => setOpenDropdown(null)}
           >
             {/* Added underline classes and conditional text color */}
-            <a href="#" className={`text-lg font-semibold hover:opacity-70 transition duration-300 relative group-hover:underline group-hover:decoration-[#F7B750] group-hover:decoration-2 ${isScrolled ? 'text-black' : 'text-[#F7B750]'}`}>Rooms</a>
+            <a href="#" className={`text-lg font-semibold hover:opacity-70 transition duration-300 relative group-hover:underline group-hover:decoration-[#F7B750] group-hover:decoration-2 ${isScrolled ? 'text-black' : 'text-[#F7B750]'}`}>Rooms</a> {/* Corrected color class */}
              {/* Animated Dropdown for Rooms */}
              <div
                className={`absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-40 overflow-hidden transition-all duration-300 ease-in-out ${
@@ -312,7 +315,7 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
         <div className={`absolute left-1/2 transform -translate-x-1/2 ${isMobileMenuOpen ? 'hidden' : 'block'}`}> {/* Hide logo when mobile menu is open */}
           {/* Replace with your actual logo image path */}
           {/* Replaced img with Image component */}
-          <Image src="/logo.svg" alt="Logo" width={100} height={48} className="h-10 md:h-12 w-auto" /> {/* Example logo size, added width/height */}
+          <Image src="/logo.svg" alt="Logo" width={100} height={48} className="h-10 md:h-12 w-auto" /> {/* Example logo size, added width/height */} {/* Corrected md:h-18 back to md:h-12 */}
         </div>
 
         {/* Right Section: Book Now Button and Mobile Menu Button */}
@@ -390,28 +393,31 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
         ))}
       </div>
 
-
-      {/* Content Container (positioned over the current slide) */}
-      {/* Added transition and conditional transform for text animation */}
-      {/* Changed duration to 700ms */}
-      <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center h-full text-white p-4 transition-transform duration-[700ms] ease-out ${contentAnimating ? 'translate-x-[-100%]' : 'translate-x-0'}`}>
-        {/* Hero Content */}
-        <div className="text-center max-w-2xl">
-          {/* Placeholder for stars/rating if needed */}
-          {/* <ul className="flex justify-center mb-4">
+        {/* Content Container (positioned over the current slide) */}
+        {/* Added transition and conditional transform for text animation */}
+        {/* Changed duration to 700ms */}
+        <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center h-full text-white p-4 transition-transform duration-[700ms] ease-out ${contentAnimating ? 'translate-x-[-100%]' : 'translate-x-0'}`}>
+            {/* Hero Content */}
+            <div className="text-center max-w-2xl">
+                {/* Placeholder for stars/rating if needed */}
+                {/* <ul className="flex justify-center mb-4">
               <li><i className="fas fa-star"></i></li>
               ...
           </ul> */}
-          {/* Removed background and opacity classes from text */}
-          {/* Applied luxury font */}
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 inline-block" style={{ fontFamily: '"Playfair Display", serif' }}>{currentSlideData.title}</h1>
-          {/* Removed background and opacity classes from text */}
-          {/* Applied luxury font */}
-          <p className="text-lg md:text-xl inline-block" style={{ fontFamily: '"Playfair Display", serif' }}>{currentSlideData.description}</p>
-          {/* Placeholder for a call-to-action link */}
-          {/* <a href="#" className="mt-6 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full">Learn More</a> */}
+                {/* Removed background and opacity classes from text */}
+                {/* Applied luxury font */}
+                <h1 className="text-4xl md:text-6xl font-bold mb-4 inline-block" style={{ fontFamily: '"Playfair Display", serif' }}>{currentSlideData.title}</h1>
+                {/* Removed background and opacity classes from text */}
+                {/* Applied luxury font */}
+                <p className="text-lg md:text-xl inline-block" style={{ fontFamily: '"Playfair Display", serif' }}>{currentSlideData.description}</p>
+                {/* Placeholder for a call-to-action link */}
+                {/* <a href="#" className="mt-6 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full">Learn More</a> */}
+            </div>
         </div>
-      </div>
+
+        {/* Booking Form */}
+        {/* Render the BookForm component directly */}
+        <BookForm />
 
       {/* Scroll Hint (Optional) */}
       {/* This would typically be a separate element positioned at the bottom */}
