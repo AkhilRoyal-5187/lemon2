@@ -1,14 +1,28 @@
 // components/ComplexHeroLayout.tsx
 "use client"; // This directive is needed in Next.js App Router for client-side hooks
 
-import React, { useState, useEffect, useRef, useCallback } from 'react'; // Import useCallback
+import React, { useState, useEffect, useRef, useCallback } from 'react'; // Import useCallback, useEffect, useRef, useState
 import Image from 'next/image'; // Import Next.js Image component
+
+// Imports for integrated components (assuming these are used elsewhere or will be added back)
+// import { BsCalendar, BsChevronDown } from 'react-icons/bs'; // Icons for datepicker and dropdown
+// import DatePicker from 'react-datepicker'; // DatePicker component
+// import 'react-datepicker/dist/react-datepicker.css'; // DatePicker styles
+// import '../style/datepicker.css'; // Custom datepicker styles (ensure this path is correct)
+import { motion } from 'framer-motion'; // Import motion and useAnimation for loading animation
+// import { useInView } from 'react-intersection-observer'; // Hook to check if element is in view
+// import { Menu } from '@headlessui/react'; // Headless UI Menu for dropdowns
+
+// Assuming these are external or defined elsewhere (if you are using the BookForm component)
+import BookForm from './BookForm'; // Adjust the import path as needed
+// import { useRoomContext } from '../context/RoomContext'; // Assuming this context exists
+// import { adultsList } from '../constants/data'; // Assuming this constant exists
+// Assuming kidsList and handleCheck are also from RoomContext or similar source
+
+
 // Removed ChevronLeftIcon, ChevronRightIcon import as buttons are removed
 // import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid'; // Example icons, install @heroicons/react
 // Removed import for Bars3Icon and XMarkIcon
-
-// Import the BookForm component
-import BookForm from './BookForm'; // Adjust the import path as needed
 
 // Note: To use the luxury font (Playfair Display), add this link to your main layout or page's <head>:
 // <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
@@ -63,14 +77,15 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
 }) => {
   // State with type annotations
   const [currentSlide, setCurrentSlide] = useState<number>(0);
-  const [prevSlideIndex, setPrevSlideIndex] = useState<number>(0); // Track previous slide for transition direction
+  // Keep prevSlideIndex as state
+  const [prevSlideIndexState, setPrevSlideIndexState] = useState<number>(0); // Renamed state variable to avoid conflict
 
   // State to manage the transform of each slide (opacity is no longer managed here for fading)
   // slideTransforms is an array of strings
   const [slideTransforms, setSlideTransforms] = useState<string[]>([]);
 
-  // State to control the text content animation
-  const [contentAnimating, setContentAnimating] = useState<boolean>(false);
+  // Removed contentAnimating state as description will be fixed
+  // const [contentAnimating, setContentAnimating] = useState<boolean>(false);
 
   // State to control the visibility of the hero section after loading
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -93,6 +108,14 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
   // Initialize with an empty array
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
+  // Removed form animation controls as we are animating the main container
+  // const formControls = useAnimation();
+  // const [formRef, formInView] = useInView({
+  //   threshold: 0.2, // Adjust as needed
+  // });
+
+  // Removed effect for form animation
+
 
   // Effect to initialize refs and handle initial loading state on mount
   useEffect(() => {
@@ -105,7 +128,7 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
      // Simulate loading delay and then show the hero section
      // In a real application, you might wait for specific resources to load
      const loadTimer = setTimeout(() => {
-        setIsLoading(false);
+        setIsLoading(false); // Set loading to false to trigger fade-in
      }, 500); // Adjust delay as needed (e.g., 0ms for immediate, or more to simulate loading)
 
      return () => clearTimeout(loadTimer); // Cleanup the timer
@@ -118,7 +141,8 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
     // Don't run transitions if still loading
     if (isLoading) return;
 
-    const exitingSlideIndex = prevSlideIndex;
+    // Use the state variable for the exiting slide index
+    const exitingSlideIndex = prevSlideIndexState;
     const enteringSlideIndex = currentSlide;
 
     // Pause all videos
@@ -136,12 +160,12 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
           return 'translateX(0) translateY(100%)'; // Slide 1 enters from bottom
         } else if (exitingSlideIndex === 1 && enteringSlideIndex !== 1) {
            // When exiting slide 1, the entering slide comes horizontally
-            return (currentSlide > prevSlideIndex || (currentSlide === 0 && prevSlideIndex === slides.length - 1))
+            return (currentSlide > prevSlideIndexState || (currentSlide === 0 && prevSlideIndexState === slides.length - 1))
              ? 'translateX(100%) translateY(0)' // Enter from right
              : 'translateX(-100%) translateY(0)'; // Enter from left
         } else if (enteringSlideIndex !== exitingSlideIndex) {
            // Other horizontal entries
-           return (currentSlide > prevSlideIndex || (currentSlide === 0 && prevSlideIndex === slides.length - 1))
+           return (currentSlide > prevSlideIndexState || (currentSlide === 0 && prevSlideIndexState === slides.length - 1))
              ? 'translateX(100%) translateY(0)' // Enter from right
              : 'translateX(-100%) translateY(0)'; // Enter from left
         }
@@ -162,14 +186,11 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
           return 'translateX(-100%) translateY(0)';
       }
        // Default horizontal exit
-       return (currentSlide > prevSlideIndex || (currentSlide === 0 && prevSlideIndex === slides.length - 1))
+       return (currentSlide > prevSlideIndexState || (currentSlide === 0 && prevSlideIndexState === slides.length - 1))
          ? 'translateX(-100%) translateY(0)'
          : 'translateX(100%) translateY(0)';
     });
 
-
-    // Start content animation (slide in from left)
-    setContentAnimating(true);
 
     // Apply initial state
     setSlideTransforms(initialTransforms);
@@ -201,19 +222,11 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
           });
       }
 
-       // End content animation after the text transition duration
-       const contentAnimationTimeout = setTimeout(() => {
-           setContentAnimating(false);
-       }, 700); // Match the text transition duration
-
-       return () => clearTimeout(contentAnimationTimeout);
-
-
     }, 50); // Small delay
 
     return () => clearTimeout(transitionTimeout); // Cleanup timeout
 
-  }, [currentSlide, prevSlideIndex, isLoading]); // Add isLoading to dependencies
+  }, [currentSlide, prevSlideIndexState, isLoading]); // Use prevSlideIndexState in dependencies
 
 
   // Effect to handle scroll for navigation bar
@@ -236,16 +249,10 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
 
   // Function to go to the next slide (wrapped in useCallback)
   const nextSlide = useCallback(() => {
-    setPrevSlideIndex(currentSlide);
+    // Update the previous slide index state before updating the current slide
+    setPrevSlideIndexState(currentSlide);
     setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
   }, [currentSlide, slides.length]); // Added slides.length to dependencies
-
-
-  // Function to go to the previous slide (removed as it was unused)
-  // const prevSlide = () => {
-  //   setPrevSlideIndex(currentSlide);
-  //   setCurrentSlide((prevSlide) => (prevSlide - 1 + slides.length) % slides.length);
-  // };
 
 
   // Auto-play functionality
@@ -257,11 +264,24 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
     return () => clearInterval(interval); // Clean up the interval on component unmount
   }, [nextSlide, isLoading]); // Add nextSlide and isLoading to dependencies
 
+  // Calculate indices for previous, current, and next slides using the currentSlide state
+  const calculatedPrevSlideIndex = (currentSlide - 1 + slides.length) % slides.length;
+  const calculatedNextSlideIndex = (currentSlide + 1) % slides.length;
+
   const currentSlideData = slides[currentSlide];
+  const prevSlideData = slides[calculatedPrevSlideIndex]; // Use calculated index
+  const nextSlideData = slides[calculatedNextSlideIndex]; // Use calculated index
+
 
   return (
-    // Conditional rendering or CSS class for visibility based on isLoading
-    <div className={`relative w-full overflow-hidden h-screen rounded-lg shadow-xl ${isLoading ? 'invisible' : 'visible'}`}> {/* Changed height to h-screen and added visibility classes */}
+    // Use motion.div for the main container to enable animations
+    // Removed invisible/visible classes as motion handles visibility via opacity
+    <motion.div
+        className={`relative w-full overflow-hidden h-screen rounded-lg shadow-xl`}
+        initial={{ opacity: 0 }} // Initial state: hidden
+        animate={{ opacity: isLoading ? 0 : 1 }} // Animate to visible when isLoading is false
+        transition={{ duration: 0.8, ease: "easeOut" }} // Animation duration and easing
+    > {/* Changed height to h-screen and added visibility classes */}
 
       {/* Navigation Bar */}
       {/* Positioned absolutely at the top, above the overlay and content */}
@@ -394,19 +414,49 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
       </div>
 
         {/* Content Container (positioned over the current slide) */}
-        {/* Added transition and conditional transform for text animation */}
-        {/* Changed duration to 700ms */}
-        <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center h-full text-white p-4 transition-transform duration-[700ms] ease-out ${contentAnimating ? 'translate-x-[-100%]' : 'translate-x-0'}`}>
-            {/* Hero Content */}
-            <div className="text-center max-w-2xl">
-                {/* Placeholder for stars/rating if needed */}
-                {/* <ul className="flex justify-center mb-4">
-              <li><i className="fas fa-star"></i></li>
-              ...
-          </ul> */}
-                {/* Removed background and opacity classes from text */}
-                {/* Applied luxury font */}
-                <h1 className="text-4xl md:text-6xl font-bold mb-4 inline-block" style={{ fontFamily: '"Playfair Display", serif' }}>{currentSlideData.title}</h1>
+        <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center h-full text-white p-4`}>
+            {/* Hero Titles Container */}
+            <div className="relative w-full text-center mb-8 overflow-hidden h-24"> {/* Added height and overflow hidden */}
+                {/* Render previous, current, and next titles */}
+                {[calculatedPrevSlideIndex, currentSlide, calculatedNextSlideIndex].map((slideIndex, index) => { // Use calculated indices
+                    const slide = slides[slideIndex]; // Get slide data using the index
+
+                    // Determine the position and size based on the index relative to the current slide in the displayed array
+                    let positionClass = '';
+                    let sizeClass = '';
+                    let opacityClass = 'opacity-0'; // Default to hidden
+
+                    if (index === 0) { // Previous slide title
+                        // Position slightly to the left of center
+                        positionClass = 'left-[20%] transform -translate-x-1/2'; // Adjusted position
+                        sizeClass = 'text-xl md:text-2xl';
+                        opacityClass = 'opacity-70'; // Slightly visible
+                    } else if (index === 1) { // Current slide title
+                        // Centered
+                        positionClass = 'left-1/2 transform -translate-x-1/2';
+                        sizeClass = 'text-4xl md:text-6xl';
+                        opacityClass = 'opacity-100'; // Fully visible
+                    } else { // Next slide title
+                        // Position slightly to the right of center
+                        positionClass = 'left-[80%] transform -translate-x-1/2'; // Adjusted position
+                        sizeClass = 'text-xl md:text-2xl';
+                        opacityClass = 'opacity-70'; // Slightly visible
+                    }
+
+                    return (
+                        <h1
+                            key={slide.id}
+                            className={`absolute top-1/2 -translate-y-1/2 font-bold transition-all duration-700 ease-in-out ${positionClass} ${sizeClass} ${opacityClass}`} // Added transition classes
+                            style={{ fontFamily: '"Playfair Display", serif', whiteSpace: 'nowrap' }} // Prevent wrapping
+                        >
+                            {slide.title}
+                        </h1>
+                    );
+                })}
+            </div>
+
+            {/* Description (fixed) */}
+            <div className={`text-center max-w-2xl`}>
                 {/* Removed background and opacity classes from text */}
                 {/* Applied luxury font */}
                 <p className="text-lg md:text-xl inline-block" style={{ fontFamily: '"Playfair Display", serif' }}>{currentSlideData.description}</p>
@@ -427,7 +477,7 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
             <div className="w-1 h-3 bg-white rounded-full mx-auto mt-1"></div>
         </div>
       </div> */}
-    </div>
+    </motion.div>
   );
 };
 
