@@ -9,7 +9,7 @@ import Image from 'next/image'; // Import Next.js Image component
 // import DatePicker from 'react-datepicker'; // DatePicker component
 // import 'react-datepicker/dist/react-datepicker.css'; // DatePicker styles
 // import '../style/datepicker.css'; // Custom datepicker styles (ensure this path is correct)
-import { motion } from 'framer-motion'; // Import motion and useAnimation for loading animation
+import { motion, useAnimation } from 'framer-motion'; // Import motion and useAnimation for loading animation
 // import { useInView } from 'react-intersection-observer'; // Hook to check if element is in view
 // import { Menu } from '@headlessui/react'; // Headless UI Menu for dropdowns
 
@@ -252,7 +252,7 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
     // Update the previous slide index state before updating the current slide
     setPrevSlideIndexState(currentSlide);
     setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
-  }, [currentSlide]); // Added slides.length to dependencies
+  }, [currentSlide, slides.length]); // Added slides.length to dependencies
 
 
   // Auto-play functionality
@@ -269,7 +269,9 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
   const calculatedNextSlideIndex = (currentSlide + 1) % slides.length;
 
   const currentSlideData = slides[currentSlide];
- 
+  const prevSlideData = slides[calculatedPrevSlideIndex]; // Use calculated index
+  const nextSlideData = slides[calculatedNextSlideIndex]; // Use calculated index
+
 
   return (
     // Use motion.div for the main container to enable animations
@@ -412,9 +414,10 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
       </div>
 
         {/* Content Container (positioned over the current slide) */}
-        <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center h-full text-white p-4`}>
+        <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center h-full text-white p-4 text-center`}> {/* Added text-center for mobile */}
             {/* Hero Titles Container */}
-            <div className="relative w-full text-center mb-8 overflow-hidden h-24"> {/* Added height and overflow hidden */}
+            {/* Adjusted height for potentially taller titles on mobile */}
+            <div className="relative w-full text-center mb-4 md:mb-8 overflow-hidden h-20 md:h-24"> {/* Adjusted height and margin-bottom for responsiveness */}
                 {/* Render previous, current, and next titles */}
                 {[calculatedPrevSlideIndex, currentSlide, calculatedNextSlideIndex].map((slideIndex, index) => { // Use calculated indices
                     const slide = slides[slideIndex]; // Get slide data using the index
@@ -425,18 +428,18 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
                     let opacityClass = 'opacity-0'; // Default to hidden
 
                     if (index === 0) { // Previous slide title
-                        // Position slightly to the left of center
-                        positionClass = 'left-[20%] transform -translate-x-1/2'; // Adjusted position
+                        // Position slightly to the left of center, hide on small screens
+                        positionClass = 'left-[20%] transform -translate-x-1/2 hidden md:block'; // Adjusted position, added hidden and md:block
                         sizeClass = 'text-xl md:text-2xl';
                         opacityClass = 'opacity-70'; // Slightly visible
                     } else if (index === 1) { // Current slide title
-                        // Centered
+                        // Centered, responsive size
                         positionClass = 'left-1/2 transform -translate-x-1/2';
-                        sizeClass = 'text-4xl md:text-6xl';
+                        sizeClass = 'text-3xl md:text-6xl'; // Adjusted size for mobile
                         opacityClass = 'opacity-100'; // Fully visible
                     } else { // Next slide title
-                        // Position slightly to the right of center
-                        positionClass = 'left-[80%] transform -translate-x-1/2'; // Adjusted position
+                        // Position slightly to the right of center, hide on small screens
+                        positionClass = 'left-[80%] transform -translate-x-1/2 hidden md:block'; // Adjusted position, added hidden and md:block
                         sizeClass = 'text-xl md:text-2xl';
                         opacityClass = 'opacity-70'; // Slightly visible
                     }
@@ -454,10 +457,11 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
             </div>
 
             {/* Description (fixed) */}
-            <div className={`text-center max-w-2xl`}>
+            {/* Ensure description is centered and wraps on smaller screens */}
+            <div className={`text-center max-w-xs md:max-w-2xl mx-auto`}> {/* Added max-w-xs and mx-auto for centering on small screens */}
                 {/* Removed background and opacity classes from text */}
                 {/* Applied luxury font */}
-                <p className="text-lg md:text-xl inline-block" style={{ fontFamily: '"Playfair Display", serif' }}>{currentSlideData.description}</p>
+                <p className="text-sm md:text-xl inline-block" style={{ fontFamily: '"Playfair Display", serif' }}>{currentSlideData.description}</p> {/* Adjusted text size for mobile */}
                 {/* Placeholder for a call-to-action link */}
                 {/* <a href="#" className="mt-6 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full">Learn More</a> */}
             </div>
@@ -465,7 +469,11 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
 
         {/* Booking Form */}
         {/* Render the BookForm component directly */}
-        <BookForm />
+        {/* BookForm component now handles its own responsive fixed positioning */}
+        <div className=''>
+          <BookForm />
+
+        </div>
 
       {/* Scroll Hint (Optional) */}
       {/* This would typically be a separate element positioned at the bottom */}
