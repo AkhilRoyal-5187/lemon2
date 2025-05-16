@@ -269,9 +269,7 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
   const calculatedNextSlideIndex = (currentSlide + 1) % slides.length;
 
   const currentSlideData = slides[currentSlide];
-  const prevSlideData = slides[calculatedPrevSlideIndex]; // Use calculated index
-  const nextSlideData = slides[calculatedNextSlideIndex]; // Use calculated index
-
+  
 
   return (
     // Use motion.div for the main container to enable animations
