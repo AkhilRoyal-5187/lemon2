@@ -252,7 +252,7 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
     // Update the previous slide index state before updating the current slide
     setPrevSlideIndexState(currentSlide);
     setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
-  }, [currentSlide, slides.length]); // Added slides.length to dependencies
+  }, [currentSlide]); // Added slides.length to dependencies
 
 
   // Auto-play functionality
@@ -269,9 +269,7 @@ const ComplexHeroLayout: React.FC<ComplexHeroLayoutProps> = ({
   const calculatedNextSlideIndex = (currentSlide + 1) % slides.length;
 
   const currentSlideData = slides[currentSlide];
-  const prevSlideData = slides[calculatedPrevSlideIndex]; // Use calculated index
-  const nextSlideData = slides[calculatedNextSlideIndex]; // Use calculated index
-
+ 
 
   return (
     // Use motion.div for the main container to enable animations
