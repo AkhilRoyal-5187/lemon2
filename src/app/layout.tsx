@@ -2,6 +2,17 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+
+// Add the Google Fonts link to the <head> using the Next.js Head component
+import Head from "next/head";
+
+<Head>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+</Head>
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
